@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>게시물 목록</title>
+    </head>
+
+    <body>
+
+        {% for post in posts %}
+        <h3>{{ post.title }}</h3>
+
+        <div class="post_container">{{ post.content }}</div>
+        {% empty %}
+        <p>게시물이 없습니다.</p>
+        {% endfor %}
+    </body>
+</html>
+    
+

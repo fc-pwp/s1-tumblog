@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!-- blog/templates/post_list.html -->
 <html>
     <head>
         <title>게시물 목록</title>
@@ -8,7 +8,9 @@
     <body>
 
         {% for post in posts %}
-        <h3>{{ post.pk }} - {{ post.title }}</h3>
+        <h3><a href="{% url 'view_post' pk=post.pk %}">
+                {{ post.pk }} - {{ post.title }}
+            </a></h3>
 
         <div class="post_container">{{ post.content }}</div>
         {% empty %}

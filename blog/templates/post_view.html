@@ -2,19 +2,16 @@
 
 <html>
     <head>
-        <title>게시물 목록</title>
+        <title>{{ post.pk }}번 게시물 보기</title>
     </head>
 
     <body>
 
-        {% for post in posts %}
         <h3>{{ post.pk }} - {{ post.title }}</h3>
 
         <div class="post_container">{{ post.content }}</div>
-        {% empty %}
-        <p>게시물이 없습니다.</p>
-        {% endfor %}
     </body>
 </html>
     
+
 

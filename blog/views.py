@@ -43,6 +43,8 @@ def create_post(request):
     if request.user.is_authenticated() is False:
         raise Exception('로그인 하세요')
 
+    categories = Category.objects.all()
+
     if request.method == 'POST':
         form = PostEditForm(request.POST)
         if form.is_valid():
@@ -54,7 +56,6 @@ def create_post(request):
 
     elif request.method == 'GET':
         form = PostEditForm()
-        categories = Category.objects.all()
 
     ctx = {
         'categories': categories,

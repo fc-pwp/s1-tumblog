@@ -6,8 +6,9 @@ from django.core.paginator import Paginator
 from django.core.paginator import PageNotAnInteger
 from django.core.paginator import EmptyPage
 
-from blog.models import Post
-from blog.models import Category
+from .models import Post
+from .models import Category
+from .forms import PostEditForm
 
 
 def list_posts(request):
@@ -61,10 +62,12 @@ def create_post(request):
         return redirect('view_post', pk=new_post.pk)
 
     elif request.method == 'GET':
+        form = PostEditForm()
         categories = Category.objects.all()
 
     ctx = {
         'categories': categories,
+        'form': form,
     }
 
     return render(request, 'edit_post.html', ctx)

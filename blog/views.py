@@ -44,22 +44,13 @@ def create_post(request):
         raise Exception('로그인 하세요')
 
     if request.method == 'POST':
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        category_pk = request.POST.get('category')
-
-        if not title or not category_pk or not content:
-            raise Exception('제목과 카테고리와 본문은 필수')
-
-        category = get_object_or_404(Category, pk=category_pk)
-        new_post = Post()
-        new_post.title = title
-        new_post.content = content
-        new_post.category = category
-        new_post.user = request.user
-        new_post.save()
-
-        return redirect('view_post', pk=new_post.pk)
+        form = PostEditForm(request.POST)
+        if form.is_valid():
+            # category = get_object_or_404(Category, pk=category_pk)
+            new_post = form.save(commit=False)
+            new_post.user = request.user
+            new_post.save()
+            return redirect('view_post', pk=new_post.pk)
 
     elif request.method == 'GET':
         form = PostEditForm()

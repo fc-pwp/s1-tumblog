@@ -4,7 +4,10 @@ from django.conf import settings
 
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    title = models.CharField(max_length=200)
+    title = models.CharField(
+        max_length=200, verbose_name='글 제목',
+        help_text='글 제목은 제목스럽게',
+    )
     category = models.ForeignKey('Category')
     content = models.TextField()
     is_published = models.BooleanField(default=False)

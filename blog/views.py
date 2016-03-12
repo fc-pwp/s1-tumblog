@@ -16,6 +16,9 @@ def create_comment(request, pk):
     if not request.user.is_authenticated():
         raise Exception('로그인을 하지 않았습니다')
 
+    if request.method != 'POST':
+        raise Exception('잘못된 접근입니다')
+
     post = get_object_or_404(Post, pk=pk, is_published=True)
     form = CommentEditForm(request.POST)
     if form.is_valid():

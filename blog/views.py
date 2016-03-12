@@ -15,6 +15,7 @@ from .forms import CommentEditForm
 def create_comment(request, pk):
     if not request.user.is_authenticated():
         raise Exception('로그인을 하지 않았습니다')
+
     post = get_object_or_404(Post, pk=pk, is_published=True)
     form = CommentEditForm(request.POST)
     if form.is_valid():
@@ -23,6 +24,11 @@ def create_comment(request, pk):
         new_comment.user = request.user
         new_comment.save()
         return redirect('view_post', pk=post.pk)
+
+    return render(request, 'post_view.html', {
+        'post': post,
+        'comment_form': form,
+    })
 
 
 def list_posts(request):
@@ -47,8 +53,10 @@ def list_posts(request):
 
 def view_post(request, pk):
     the_post = get_object_or_404(Post, pk=pk)
+    comment_form = CommentEditForm()
     ctx = {
         'post': the_post,
+        'comment_form': comment_form,
     }
     return render(request, 'post_view.html', ctx)
 

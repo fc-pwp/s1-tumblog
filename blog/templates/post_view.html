@@ -11,9 +11,21 @@
 
         <div class="post_container">{{ post.content }}</div>
 
+        <div class="comment_container">
+            {% for comment in post.comment_set.all %}
+            <div class="comment">
+                <span>{{ comment.user }}</span>
+                <div>{{ comment.content }}</div>
+            </div>
+            {% empty %}
+            <p>댓글이 없습니다.</p>
+            {% endfor %}
+        </div>
+
         <form method="POST" action="{% url 'create_comment' pk=post.pk %}">
             {% csrf_token %}
-            <textarea name="content"></textarea>
+
+            {{ comment_form.as_p }}
             <p>
             <button type="submit">댓글 저장</button>
             </p>

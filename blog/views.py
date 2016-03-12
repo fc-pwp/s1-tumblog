@@ -9,6 +9,20 @@ from django.core.paginator import EmptyPage
 from .models import Post
 from .models import Category
 from .forms import PostEditForm
+from .forms import CommentEditForm
+
+
+def create_comment(request, pk):
+    if not request.user.is_authenticated():
+        raise Exception('로그인을 하지 않았습니다')
+    post = get_object_or_404(Post, pk=pk, is_published=True)
+    form = CommentEditForm(request.POST)
+    if form.is_valid():
+        new_comment = form.save(commit=False)
+        new_comment.post = post
+        new_comment.user = request.user
+        new_comment.save()
+        return redirect('view_post', pk=post.pk)
 
 
 def list_posts(request):

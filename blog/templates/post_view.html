@@ -10,6 +10,15 @@
         <h3>{{ post.pk }} - {{ post.title }}</h3>
 
         <div class="post_container">{{ post.content }}</div>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+            <textarea name="content"></textarea>
+            <p>
+            <button type="submit">댓글 저장</button>
+            </p>
+        </form>
+
     </body>
 </html>
     

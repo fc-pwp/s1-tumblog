@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
 ]
 AUTHENTICATION_BACKENDS = (
-    'social.backends.tumblr.TumblrOAuth',
+#    'social.backends.tumblr.TumblrOAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -128,6 +128,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-SOCIAL_AUTH_TUMBLR_KEY = 'yMHv4EWM3pXJJoyyReFssGcgrI3h4LOrnfYcQWWqqkrb7EeNQ1'
-SOCIAL_AUTH_TUMBLR_SECRET = 'Cpi4ZF14g6FVrCkir9qMcJo22sUAEoTwYDNHK2vwIt8uuswYMY'
+LOGIN_REDIRECT_URL = '/blog/posts/edit/'
+
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
 

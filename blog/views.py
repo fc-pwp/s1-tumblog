@@ -18,8 +18,8 @@ from .forms import PostEditForm
 from .forms import CommentEditForm
 
 
-consumer_key = settings.SOCIAL_AUTH_TUMBLR_KEY
-consumer_secret = settings.SOCIAL_AUTH_TUMBLR_SECRET
+#consumer_key = settings.SOCIAL_AUTH_TUMBLR_KEY
+#consumer_secret = settings.SOCIAL_AUTH_TUMBLR_SECRET
 
 
 def create_comment(request, pk):

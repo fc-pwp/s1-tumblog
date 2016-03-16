@@ -1,0 +1,16 @@
+{% if form.errors %}
+<p>ID와 비밀번호가 일치하지 않습니다.</p>
+<p>또는 접근 권한이 없습니다.</p>
+{% endif %}
+
+<form method="POST" action="{% url 'login_url' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}" />
+
+    {{ form.as_p }}
+
+    <p>
+        <button type="submit">로그인</button>
+    </p>
+</form>
+

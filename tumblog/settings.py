@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'lf_#q8ypfkl#nzvmu-u-4h=x8c89k%x=!=8#a081a3kw*%ov1n'
+SECRET_KEY = '28mra(*!6&=%l5k!d1oa7@fhv4uy%-%p(15c9j!n$ai3#9hccs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,8 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
-    'bootstrap3',
+    'social.apps.django_app.default',
 ]
+AUTHENTICATION_BACKENDS = (
+    'social.backends.tumblr.TumblrOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,7 +61,9 @@ ROOT_URLCONF = 'tumblog.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'template_dir'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,3 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+SOCIAL_AUTH_TUMBLR_KEY = 'yMHv4EWM3pXJJoyyReFssGcgrI3h4LOrnfYcQWWqqkrb7EeNQ1'
+SOCIAL_AUTH_TUMBLR_SECRET = 'Cpi4ZF14g6FVrCkir9qMcJo22sUAEoTwYDNHK2vwIt8uuswYMY'
+

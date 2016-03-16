@@ -1,38 +1,49 @@
 <!DOCTYPE html>
-
 <html>
-    <head>
-        <title>{{ post.pk }}번 게시물 보기</title>
-    </head>
 
-    <body>
+<head>
+    <title>{{ post.pk }}번 게시물 보기</title>
 
-        <h3>{{ post.pk }} - {{ post.title }}</h3>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        var comment_form = $('.comment_form');
+        var comment_container = $('.comment_container');
+        comment_form.submit(function(e) {
+            e.preventDefault();
+            var posting = $.post(comment_form.attr('action'), comment_form.serialize());
+            posting.done(function(data) {
+                comment_container.append(data);
+            });
+            return false;
+        });
+    });
+    </script>
+</head>
 
-        <div class="post_container">{{ post.content }}</div>
+<body class="container">
 
-        <div class="comment_container">
-            {% for comment in post.comment_set.all %}
-            <div class="comment">
-                <span>{{ comment.user }}</span>
-                <div>{{ comment.content }}</div>
-            </div>
-            {% empty %}
-            <p>댓글이 없습니다.</p>
-            {% endfor %}
-        </div>
+    <div class="post_container">
+        <h2>{{ post.title }}</h2>
 
-        <form method="POST" action="{% url 'create_comment' pk=post.pk %}">
-            {% csrf_token %}
+        <div class="post_content">{{ post.content }}</div>
+    </div>
 
-            {{ comment_form.as_p }}
-            <p>
-            <button type="submit">댓글 저장</button>
-            </p>
-        </form>
+    <div class="comment_container">
+        {% for comment in comments %}
+        <p>{{ comment.pk }} - {{ comment.content }}</p>
+        {% endfor %}
+    </div>
 
-    </body>
+    <form method="POST" action="{% url 'create_comment' pk=post.pk %}" class="comment_form">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <p>
+        <button type="submit">저장</button>
+        </p>
+    </form>
+
+</body>
 </html>
-    
-
-

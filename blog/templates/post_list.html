@@ -1,37 +1,28 @@
 <!DOCTYPE html>
-<!-- blog/templates/post_list.html -->
 <html>
-    <head>
-        <title>게시물 목록</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<head>
+    <title>게시물 목록</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
 
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<body class="container">
 
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    </head>
+    {% for post in posts %}
+    <div class="post_container">
+        <h3><a href="{% url 'view_post' pk=post.pk %}">{{ post.title }}</a></h3>
 
-    <body class="container">
+        <div class="post_content">{{ post.content }}</div>
+    </div>
+    {% endfor %}
 
-        {% for post in posts %}
-        <h3><a href="{% url 'view_post' pk=post.pk %}">
-                {{ post.pk }} - {{ post.title }}
-            </a></h3>
+    {% if posts.has_previous %}
+    <span><a href="?page={{ posts.previous_page_number }}">이전 쪽</a></span>
+    {% endif %}
+    <span>{{ posts.number }} / {{ posts.paginator.num_pages }}</span>
+    {% if posts.has_next %}
+    <span><a href="?page={{ posts.next_page_number }}">다음 쪽</a></span>
+    {% endif %}
 
-        <div class="post_container">{{ post.content }}</div>
-        {% empty %}
-        <p>게시물이 없습니다.</p>
-        {% endfor %}
-
-        <p>
-            <a href="{% url 'create_post' %}" class="btn btn-primary btn-sm">글 쓰기</a>
-        </p>
-    </body>
+</body>
 </html>
-    
-

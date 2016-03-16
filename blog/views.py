@@ -1,91 +1,138 @@
+import requests
+from requests_oauthlib import OAuth1
+
+from django.conf import settings
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 from django.core.paginator import Paginator
-from django.core.paginator import PageNotAnInteger
 from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
 
 from .models import Post
+from .models import Comment
 from .models import Category
 from .forms import PostEditForm
 from .forms import CommentEditForm
 
 
+consumer_key = settings.SOCIAL_AUTH_TUMBLR_KEY
+consumer_secret = settings.SOCIAL_AUTH_TUMBLR_SECRET
+
+
 def create_comment(request, pk):
-    if not request.user.is_authenticated():
-        raise Exception('로그인을 하지 않았습니다')
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = CommentEditForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            if request.is_ajax():
+                result_html = '<p>{pk} : {content}'.format(
+                    pk=comment.pk,
+                    content=comment.content,
+                )
+                return HttpResponse(result_html)
+            else:
+                return redirect('view_post', pk=post.pk)
+    else:
+        form = CommentEditForm()
 
-    if request.method != 'POST':
-        raise Exception('잘못된 접근입니다')
-
-    post = get_object_or_404(Post, pk=pk, is_published=True)
-    form = CommentEditForm(request.POST)
-    if form.is_valid():
-        new_comment = form.save(commit=False)
-        new_comment.post = post
-        new_comment.user = request.user
-        new_comment.save()
-        return redirect('view_post', pk=post.pk)
+    comments = Comment.objects.filter(post=post)
 
     return render(request, 'post_view.html', {
         'post': post,
         'comment_form': form,
+        'comments': comments,
     })
 
 
-def list_posts(request):
-    page = request.GET.get('page', 1)
-
-    object_list = Post.objects.all().order_by('-created_at')
-    per_page = 2
-    pn = Paginator(object_list, per_page)
-
-    try:
-        posts = pn.page(page)
-    except PageNotAnInteger:
-        posts = pn.page(1)
-    except EmptyPage:
-        posts = pn.page(pn.num_pages)
-
-    ctx = {
-        'posts': posts,
-    }
-    return render(request, 'post_list.html', ctx)
-
-
-def view_post(request, pk):
-    the_post = get_object_or_404(Post, pk=pk)
-    comment_form = CommentEditForm()
-    ctx = {
-        'post': the_post,
-        'comment_form': comment_form,
-    }
-    return render(request, 'post_view.html', ctx)
-
-
+@login_required
 def create_post(request):
-    if request.user.is_authenticated() is False:
-        raise Exception('로그인 하세요')
-
-    categories = Category.objects.all()
+    tumblr = request.user.social_auth.filter(provider='tumblr').first()
+    if not tumblr:
+        raise Exception('Tumblr로 먼저 로그인을 하세요')
+    oauth_key = tumblr.tokens['oauth_token']
+    oauth_secret = tumblr.tokens['oauth_token_secret']
+    url='http://api.tumblr.com/v2/blog/hannal/post'
+    client = requests.Session()
+    client.auth = OAuth1(consumer_key, consumer_secret, oauth_key, oauth_secret)
 
     if request.method == 'POST':
         form = PostEditForm(request.POST)
         if form.is_valid():
-            # category = get_object_or_404(Category, pk=category_pk)
-            new_post = form.save(commit=False)
-            new_post.user = request.user
-            new_post.save()
-            return redirect('view_post', pk=new_post.pk)
-
-    elif request.method == 'GET':
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            _params = {
+                'title': post.title,
+                'body': post.content,
+                'type': 'text'
+            }
+            client.post(url, data=_params)
+            return redirect('view_post', pk=post.pk)
+    else:
         form = PostEditForm()
 
-    ctx = {
-        'categories': categories,
+    return render(request, 'edit_post.html', {
         'form': form,
-    }
+    })
 
-    return render(request, 'edit_post.html', ctx)
+
+def category_posts(request, category_pk):
+    post_list = Post.objects.filter(category__pk=category_pk) \
+                .order_by('-id')
+    paginator = Paginator(post_list, 2)
+
+    current_page = request.GET.get('page')
+
+    try:
+        posts = paginator.page(current_page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    return render(request, 'post_list.html', {
+        'posts': posts,
+    })
+
+
+def list_posts(request, category_pk=None):
+    if category_pk is None:
+        post_list = Post.objects.all().order_by('-id')
+    else:
+        post_list = Post.objects.filter(category__pk=category_pk) \
+                .order_by('-id')
+    paginator = Paginator(post_list, 2)
+
+    current_page = request.GET.get('page')
+
+    try:
+        posts = paginator.page(current_page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    return render(request, 'post_list.html', {
+        'posts': posts,
+    })
+
+
+def view_post(request, pk):
+    print(request.user.social_auth.filter(provider='tumblr')[0].extra_data)
+    post = get_object_or_404(Post, pk=pk)
+    comment_form = CommentEditForm()
+    comments = Comment.objects.filter(post=post)
+
+    return render(request, 'post_view.html', {
+        'post': post,
+        'comment_form': comment_form,
+        'comments': comments,
+    })
 

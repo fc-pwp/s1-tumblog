@@ -1,18 +1,17 @@
 from django import forms
 
-from .models import Post
-from .models import Comment
-
-
-class CommentEditForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['content', ]
+from blog.models import Post
+from blog.models import Comment
 
 
 class PostEditForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'category', 'is_published', 'content']
-        # fields = '__all__'
+        fields = ['category', 'title', 'content']
+
+
+class CommentEditForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
 

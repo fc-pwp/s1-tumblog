@@ -1,0 +1,7 @@
+    <div class="comment_container">
+        {% for comment in comments %}
+        <p>{{ comment.pk }} - {{ comment.content }}</p>
+        {% endfor %}
+    </div>
+
+

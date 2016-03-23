@@ -31,11 +31,9 @@
         <div class="post_content">{{ post.content }}</div>
     </div>
 
-    <div class="comment_container">
-        {% for comment in comments %}
-        <p>{{ comment.pk }} - {{ comment.content }}</p>
-        {% endfor %}
-    </div>
+    {% with comments=post.comment_set.all %}
+        {% include 'comment_list.html' %}
+    {% endwith %}
 
     <form method="POST" action="{% url 'create_comment' pk=post.pk %}" class="comment_form">
         {% csrf_token %}

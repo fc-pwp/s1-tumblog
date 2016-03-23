@@ -125,14 +125,11 @@ def list_posts(request, category_pk=None):
 
 
 def view_post(request, pk):
-    print(request.user.social_auth.filter(provider='tumblr')[0].extra_data)
     post = get_object_or_404(Post, pk=pk)
     comment_form = CommentEditForm()
-    comments = Comment.objects.filter(post=post)
 
     return render(request, 'post_view.html', {
         'post': post,
         'comment_form': comment_form,
-        'comments': comments,
     })
 

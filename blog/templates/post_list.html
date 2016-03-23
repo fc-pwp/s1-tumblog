@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends 'layout.html' %}
 
-<head>
-    <title>게시물 목록</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-</head>
+{% block page_title %}글 목록 페이지{% endblock %}
 
-<body class="container">
-
+{% block body %}
     {% for post in posts %}
     <div class="post_container">
         <h3><a href="{% url 'view_post' pk=post.pk %}">{{ post.title }}</a></h3>
@@ -24,5 +19,10 @@
     <span><a href="?page={{ posts.next_page_number }}">다음 쪽</a></span>
     {% endif %}
 
-</body>
-</html>
+{% endblock %}
+
+{% block header %}
+    <h1>Tumblog!</h1>
+    {% include 'dummy.html' %}
+{% endblock %}
+
